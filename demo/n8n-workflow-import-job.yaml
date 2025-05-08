@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: n8n-workflow-import
+  namespace: n8n
+spec:
+  template:
+    spec:
+      containers:
+      - name: n8n-import
+        image: n8nio/n8n:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          # Wait for n8n to be ready
+          sleep 30
+          echo "Importing credentials..."
+          n8n import:credentials --input=/demo-data/ollama-credentials.json
+          echo "Importing workflows..."
+          n8n import:workflow --input=/demo-data/workflow-demo.json
+          echo "Import completed!"
+        env:
+        - name: DB_TYPE
+          value: postgresdb
+        - name: DB_POSTGRESDB_HOST
+          value: postgres-service.n8n.svc.cluster.local
+        - name: DB_POSTGRESDB_PORT
+          value: "5432"
+        - name: DB_POSTGRESDB_DATABASE
+          value: n8n
+        - name: DB_POSTGRESDB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_NON_ROOT_USER
+        - name: DB_POSTGRESDB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_NON_ROOT_PASSWORD
+        - name: N8N_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: n8n-secret
+              key: N8N_ENCRYPTION_KEY
+        - name: N8N_PORT
+          value: "5678"
+        - name: N8N_RUNNERS_ENABLED
+          value: "true"
+        - name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+          value: "true"
+        volumeMounts:
+        - name: demo-data
+          mountPath: /demo-data
+      volumes:
+      - name: demo-data
+        configMap:
+          name: n8n-demo-workflows
+      restartPolicy: Never
+  backoffLimit: 3

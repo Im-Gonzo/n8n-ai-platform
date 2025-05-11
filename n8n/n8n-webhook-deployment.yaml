@@ -6,7 +6,7 @@ metadata:
   name: n8n-webhook
   namespace: n8n
 spec:
-  replicas: 2  # Adjust based on your webhook load
+  replicas: 1  # Adjust based on your webhook load
   selector:
     matchLabels:
       service: n8n-webhook
@@ -40,17 +40,14 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_NON_ROOT_PASSWORD
-            # Queue Mode Settings
             - name: EXECUTIONS_MODE
               value: "queue"
             - name: QUEUE_BULL_REDIS_HOST
               value: "redis.n8n.svc.cluster.local"
             - name: QUEUE_BULL_REDIS_PORT
               value: "6379"
-            # Set the webhook URL to match your ingress
             - name: WEBHOOK_URL
               value: "http://n8n.local"
-            # Get the same encryption key as the main instance
             - name: N8N_ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
@@ -76,4 +73,4 @@ spec:
         - name: n8n-secret
           secret:
             secretName: n8n-secret
-          optional: true
+            optional: true

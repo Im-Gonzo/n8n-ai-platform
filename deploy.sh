@@ -137,18 +137,14 @@ deploy() {
         apply_manifest demo/n8n-workflow-import-job.yaml
     fi
 
-    echo -e "${YELLOW}💡 Optional Components (commented out)${NC}"
-    echo -e "${YELLOW}💡 Uncomment in script to deploy:${NC}"
-    echo -e "${YELLOW}   - Webhook processors (for high request volume)${NC}"
-    echo -e "${YELLOW}   - Ingress (for external access using domain name)${NC}"
     # Uncomment to deploy webhook processors
-    # echo -e "${CYAN}🧩 Step 9: Deploying webhook processors${NC}"
-    # apply_manifest n8n/n8n-webhook-deployment.yaml
-    # apply_manifest n8n/n8n-webhook-service.yaml
+    echo -e "${CYAN}🧩 Step 9: Deploying webhook processors${NC}"
+    apply_manifest n8n/n8n-webhook-deployment.yaml
+    apply_manifest n8n/n8n-webhook-service.yaml
 
     # Uncomment to deploy ingress
-    # echo -e "${CYAN}🧩 Step 10: Deploying ingress${NC}"
-    # apply_manifest n8n/n8n-ingress.yaml
+    echo -e "${CYAN}🧩 Step 10: Deploying ingress${NC}"
+    apply_manifest n8n/n8n-ingress.yaml
 
     # Display pods
     echo ""

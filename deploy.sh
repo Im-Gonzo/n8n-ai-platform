@@ -173,7 +173,10 @@ deploy() {
         echo -e "export QDRANT_URL=http://localhost:${QDRANT_PORT:-6333}"
     fi
     echo -e "${PURPLE}=================================================${NC}"
-    
+
+    echo -e "kubectl set env deployment/n8n -n n8n OLLAMA_HOST=ollama.n8n.svc.cluster.local:11434"
+    echo -e "kubectl set env deployment/n8n-worker -n n8n OLLAMA_HOST=ollama.n8n.svc.cluster.local:11434"
+
     echo ""
     echo -e "${GREEN}🎉 Deployment completed successfully! 🎉${NC}"
     echo -e "${PURPLE}=================================================${NC}"
